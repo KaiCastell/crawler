@@ -1,6 +1,8 @@
 import discord
 import os
 import playerlist #so far only used file
+import maps
+import actions
 from discord.ext import commands
 from dotenv import load_dotenv
 # Create a Discord client instance and set the command prefix
@@ -10,7 +12,8 @@ bot = commands.Bot(command_prefix='>', intents=intents)
 
 #################################### OTHER INITIALIZATIONS ##############################################
 
-players = playerlist.playerList()
+players = playerlist.PlayerList()
+testRoom = maps.Room(0, "No description")
 # filing, note that, a is append, r is read, w is write, x creates a new file, second character t for text (default), b for binary
 
 # Set the confirmation message when the bot is ready
@@ -30,10 +33,17 @@ async def on_disconnect():
     print(f'Disconnected from {bot.user.name}')
 
 ################################### CHOOSE CLASS DROPDOWN ######################################################
+
 @bot.command()
-async def chooseClass(ctx: commands.Context):
+async def choose(ctx: commands.Context, arg):
     if(ctx.channel.name == 'crawler'): #only respond to the command if it was in the crawler channel
-        await ctx.channel.send("Select class: \n", view=classSelectDropdownView()) #ctx.send is also valid
+        match(arg):
+            case("class"):
+                await ctx.channel.send("Select class: \n", view=classSelectDropdownView()) #ctx.send is also valid
+            case("commands"):
+                pass # REPLACEME with the help stuff
+            case _:
+                await ctx.channel.send(f"This is not an available command. Try '>choose commands' for help.")
 
 class classSelectDropdown(discord.ui.Select): # this is the dropdown selection, but not the view
     def __init__(self):
@@ -75,6 +85,7 @@ class classViewDropdownView(discord.ui.View): #this is the dropdown viewing
         self.add_item(classViewDropdown())
 
 ##################################### VIEW COMMANDS ################################################## 
+
 @bot.command()
 async def view(ctx: commands.Context, arg): #all view commands, listed out into a switch case
     user = ctx.author.name
@@ -86,12 +97,49 @@ async def view(ctx: commands.Context, arg): #all view commands, listed out into 
                 await ctx.channel.send(f"Viewing {user}'s class:\n{players.viewClassShort(user)}")
             case "commands":
                 pass # REPLACEME This is the help function
-            case "players": #REPLACEME have case for no current players
+            case "players":
                 await ctx.channel.send(players.viewPlayers())
             case "classes":
                 await ctx.channel.send("View class for a detailed description: \n", view=classViewDropdownView())
+            case "map":
+                await ctx.channel.send(testRoom.print())
             case _:
                 await ctx.channel.send(f"This is not an available command. Try '>view commands' for help.")
+
+############################################ MAP COMMANDS #############################################
+
+@bot.command()
+async def map(ctx: commands.Context, arg): #all view commands, listed out into a switch case
+    user = ctx.author.name
+    if(ctx.channel.name == 'crawler'): #only respond to the command if it was in the crawler channel
+        match(arg):
+            case "spawn":
+                testRoom.spawnPlayer(players.getSelf(user))
+                await ctx.channel.send(testRoom.print())
+            case "commands":
+                pass #REPLACEME This is the help function
+            case "view":
+                await ctx.channel.send(testRoom.print())
+            case _:
+                await ctx.channel.send(f"This is not an available command. Try '>map commands' for help.")
+
+############################################ ACTION COMMANDS #############################################
+
+@bot.command()
+async def action(ctx: commands.Context, *args): #all view commands, listed out into a switch case
+    user = ctx.author.name
+    if(ctx.channel.name == 'crawler'): #only respond to the command if it was in the crawler channel
+        match(args[0]):
+            case "commands":
+                pass #REPLACEME This is the help function
+            case "view":
+                await ctx.channel.send(f"Viewing {user}'s actions:\n{players.getSelf(user).actions}")
+            case "move":
+                #print(f"{args[0]}, {args[1]}, {args[2]}")
+                await ctx.channel.send(actions.move(user, testRoom, int(args[1]), int(args[2])))
+            case _:
+                await ctx.channel.send(f"This is not an available command. Try '>map commands' for help.")
+
 
 ############################################# OTHER COMMANDS #########################################
 
@@ -113,7 +161,7 @@ async def on_command_error(ctx: commands.Context, error):
     if isinstance(error, discord.ext.commands.errors.MissingPermissions):
         print("Reset command attempted by " + ctx.author.name)
         await ctx.send("Sorry, you don't have permission to do that. You must be an admin.")
-        
+
 # Retrieve token from the .env file
 load_dotenv()
 bot.run(os.getenv('TOKEN'))
