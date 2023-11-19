@@ -2,7 +2,7 @@ class Entity:
     actions = [] 
     conditions = {} # REPLACEME fill with lists of each condition
     def __init__(self, maxHealth, health, speed, block, blockMult, critChance, critDmgMult, healingMult, dmgInMult, dmgOutMult):
-        self.maxHealth = maxHealth 
+        self.maxHealth = maxHealth
         self.health = health
         self.speed = speed
         self.block = block
@@ -17,9 +17,6 @@ class Entity:
                 f"Crit Damage: {self.critDmgMult}\nHealing Multiplier: {self.healingMult}\nDamage Received Table: {self.dmgInMult}\nDamage Dealt Table: {self.dmgOutMult}\n")
         #just an example, realistically this should never be printed? Or one for the enemy is unneeded and it actually just goes here
 
-
-
-    
 class Enemy(Entity): # needs string name, along with allies
     pass
 

@@ -1,8 +1,8 @@
 import player
 import os
 
-class playerList:
-    def __init__(self):
+class PlayerList: #holds all current players. Reads and writes to file to save them
+    def __init__(self): #on initiation takes information from files
         print("File read start")
         self.players = []
         count = 1
@@ -51,20 +51,14 @@ class playerList:
                     self.players[count-1].luck.update({'rare':float(playerFile.readline())})
                     self.players[count-1].luck.update({'epic':float(playerFile.readline())})
                     self.players[count-1].luck.update({'legendary':float(playerFile.readline())})
-                    playerFile.readline() # eat up the actions line, now read in actions
-                    line = playerFile.readline().strip() #save it and check if its not the next set of stuff
-                    while line != "conditions":
-                        line = playerFile.readline().strip()
-                    while line != "equipment":
+                    line = playerFile.readline().strip() #save it and check if its not the end, start reading in the mutators.
+                    while line != "fileend": #NOTEME need to equip all these mutators, will need an add mutator version that ignores "on equip" effects. this means it will only edit actions and conditions.
+                        #I anticipate a bug here where the conditions get added and applied, double applying some effects. how to prevent? putting in notes
                         line = playerFile.readline().strip() # REPLACEME here if it wasn't equipment then you would start reading, so if an action took 5 lines to represent we want 5 readlines then go back to the top, ending with a line = playerFile, 
-                        #note that the first read in would actually be action.attribute = line                    
-                    while line != "traits":
-                        line = playerFile.readline().strip()
-                    while line != "relics":
-                        line = playerFile.readline().strip()
-            except Exception as e:
-                print(e)
-                loop = False # we no longer found a file so we break out
+                        #note that the first read in would actually be action.attribute = line
+            except: #Exception as e
+                #print(e) UNCOMMENT IF YOU WANT TO KNOW THE ERROR, alongside code up one line
+                loop = False # we no longer found a file so we break out, kinda beats a dead horse if i understand things correctly
                 print("File read end")
                 break
             count+=1
@@ -91,28 +85,18 @@ class playerList:
                     for key in x.luck.keys():
                         playerFile.write(str(x.luck[key]) + "\n")
                         
-                    playerFile.write("actions\n") # NOTEME may be able to only read in the items, class and ignore xpMult, actions, etc since they could be automatically calculated? that may be harder though
-                    for y in range(len(x.actions)): # NOTEME actions should be giving out strings may need str()
-                        playerFile.write(x.actions[y] + "\n")
-                    
-                    playerFile.write("conditions\n") # NOTEME conditions is likely a 2D array
-                    for y in range(len(x.actions)):
-                        playerFile.write(x.actions[y] + "\n")
-                        
-                    playerFile.write("equipment\n") # REPLACEME still need to do relics and such  
-                    for y in range(len(x.equipment)):
-                        playerFile.write(x.equipment[y] + "\n")
-                    
-                    playerFile.write("traits\n")
-                    for y in range(len(x.traits)):
-                        playerFile.write(x.traits[y] + "\n")
-                        
-                    playerFile.write("relics\n")
-                    for y in range(len(x.relics)):
-                        playerFile.write(x.relics[y] + "\n")
+                    playerFile.write("mutators\n") # NOTEME mutators are anything that change the actions and conditions of a player: relics, equipment, traits
+                    for y in range(len(x.mutators)):
+                        playerFile.write(x.mutators[y] + "\n")
+                    playerFile.write("fileend")
                 count+=1
-        print("Players saved to file")
         
+        print("Players saved to file")
+    
+    def getSelf(self, user):
+        for x in self.players:
+            if(x.user == user):
+                return x
     def viewPlayers(self):
         if(len(self.players) == 0):
             return "There are no current players."

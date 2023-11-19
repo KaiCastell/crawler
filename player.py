@@ -1,9 +1,7 @@
 import entity
 
 class Player(entity.Entity):
-    equipment = [] # any time you add an equipment/trait/relic you add to the actions or conditions dictionary/list
-    traits = []
-    relics = [] #includes normal and taxes
+    mutators = [] #includes traits, relics, equipments
     #REPLACEME Conditions 2D List?
     xp = 0
     xpMult = 1.0
@@ -14,14 +12,21 @@ class Player(entity.Entity):
     healingMult = 1.0
     dmgInMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0, 'magic':1.0, 'fire':1.0, 'cold':1.0, 'electric':1.0, 'poison':1.0} #works like a multiplier table. 0.5 is a 50% resistance. dictionary lookup is better here
     dmgOutMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0, 'magic':1.0, 'fire':1.0, 'cold':1.0, 'electric':1.0, 'poison':1.0}
-    luck = {'common':0.50, 'uncommon':0.30, 'rare':0.15, 'epic':0.04, 'legendary':0.01} # REPLACEME this is a placeholder because i don't know all the interactables, but it should turn out to be an array of chances one for each interaction that can be affected by relics, e.g. luck to find rare items is normally 2% and can be upped
+    luck = {'common':0.50, 'uncommon':0.30, 'rare':0.15, 'epic':0.04, 'legendary':0.01} # REPLACEME this is a placeholder. should involve a table for all interactions
+    actions = [] #REPLACEME with actions objects. the creation of this dictionary should instantiate the proper objects. action.actions(move) i think? I can't think of a better way.
+    conditions = [] #REPLACEME should just run down the entire list anytime anything happens
+    
     def __init__(self, user, maxHealth, health, speed):
         self.user = user
         self.maxHealth = maxHealth
         self.health = health #current health. Should almost always initialize to = max health
         self.speed = speed
     def __str__(self):
-        return f"Player: {self.user}\n"+ super(Player, self).__str__() + f"Luck:\n{self.luck}\nXP: {self.xp}\nXP Multiplier: {self.xpMult}\nActions:\n{self.actions}\nEquipment:\n{self.equipment}\nTraits:\n{self.traits}\nRelics:\n{self.relics}\n"
+        equipment = []
+        relics = []
+        traits = []
+        #REPLACEME, iterate through mutators to populate equipment relics and traits
+        return f"Player: {self.user}\n"+ super(Player, self).__str__() + f"Luck:\n{self.luck}\nXP: {self.xp}\nXP Multiplier: {self.xpMult}\nActions:\n{self.actions}\nEquipment:\n{equipment}\nTraits:\n{traits}\nRelics:\n{relics}\n"
 
 class Doctor(Player):
     def __init__(self, user):
