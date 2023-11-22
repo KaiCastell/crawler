@@ -13,8 +13,8 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
                     print("Opening player" + str(count) + ".txt")
                     #start with the base class and then edit
                     className = playerFile.readline().strip()
-                    user = playerFile.readline().strip()
-                    self.add(user, className)
+                    name = playerFile.readline().strip()
+                    self.add(name, className)
                     self.players[count-1].health = int(playerFile.readline())
                     self.players[count-1].maxHealth = int(playerFile.readline())
                     self.players[count-1].speed = int(playerFile.readline())
@@ -74,7 +74,7 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         else:
             for x in self.players:
                 with open('player' + str(count) + '.txt', 'wt') as playerFile: #open up the file, closing as it exits while, opened in writing text mode
-                    playerFile.write(f"{x.__class__.__name__}\n{x.user}\n{x.health}\n{x.maxHealth}\n{x.speed}\n")
+                    playerFile.write(f"{x.__class__.__name__}\n{x.name}\n{x.health}\n{x.maxHealth}\n{x.speed}\n")
                     playerFile.write(f"{x.xp}\n{x.xpMult}\n{x.block}\n{x.blockMult}\n{x.critChance}\n{x.critDmgMult}\n{x.healingMult}\n")
                     for key in x.dmgInMult.keys():
                         playerFile.write(str(x.dmgInMult[key]) + "\n")
@@ -93,43 +93,40 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         
         print("Players saved to file")
     
-    def getSelf(self, user):
+    def getSelf(self, name):
         for x in self.players:
-            if(x.user == user):
+            if(x.name == name):
                 return x
     def viewPlayers(self):
         if(len(self.players) == 0):
             return "There are no current players."
         string = "Viewing current players:\n"
         for x in self.players:
-            string += f"\t{x.user} as the **{x.__class__.__name__}**\n"
+            string += f"\t{x.name} as the **{x.__class__.__name__}**\n"
         return string
-    def viewClass(self, user): # prints everything
+    def viewClass(self, name): # prints everything
+        return str(self.getSelf(name))
+    def viewClassShort(self, name):
+        x = self.getSelf(name)        
+        return f"**{x.__class__.__name__}**\nPlayer: {x.name}\nHealth: {x.health}/{x.maxHealth}\nSpeed: {x.speed}\nXP: {x.xp}\nActions:\n{x.actions}"  
+    def add(self, name, className):
         for x in self.players:
-            if(x.user == user):
-                return str(x)
-    def viewClassShort(self, user):
-        for x in self.players:
-            if(x.user == user):
-                return f"**{x.__class__.__name__}**\nPlayer: {x.user}\nHealth: {x.health}/{x.maxHealth}\nSpeed: {x.speed}\nXP: {x.xp}\nActions:\n{x.actions}"  
-    def add(self, user, className):
-        for x in self.players:
-            if(x.user == user):
+            if(x.name == name):
                 return False
         match className:
             case "Doctor":
-                self.players.append(player.Doctor(user))
+                self.players.append(player.Doctor(name))
             case "Scientist":
-                self.players.append(player.Scientist(user))
+                self.players.append(player.Scientist(name))
             case _:
                 print("No corresponding class found")
         return True
-    def addFromDropdown(self, user, className): # Add to here anytime you add a new class
-        if(self.add(user, className)):
-            print(f"{className} assigned to {user}")
+    def addFromDropdown(self, name, className): # Add to here anytime you add a new class
+        if(self.add(name, className)):
+            print(f"{className} assigned to {name}")
             return f"You have been assigned **{className}**."
         else:
-            print(f"{className} attempted to be assigned to {user}. Failed.")
+            print(f"{className} attempted to be assigned to {name}. Failed.")
             return f"You already chose a class. If you want a new class, call the delete function."
     def reset(self):
         self.players.clear()
