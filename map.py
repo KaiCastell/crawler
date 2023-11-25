@@ -61,11 +61,11 @@ class Room: #this is what fills the tileArray no matter what you put inside the 
     
     def print(self): #just iterates the array to print based on identity
         string = "```\n  "
-        for x in range(len(self.tileArray)):
+        for x in range(len(self.tileArray)): #top row of numbers
             string += (str(int(x)) + " ")
         string += "\n"
         for x in range(len(self.tileArray)):
-            string += f"{x} "
+            string += f"{x} " #left row of numbers
             for y in range(len(self.tileArray[x])):
                 string += str(self.tileArray[x][y])
             string += "\n"

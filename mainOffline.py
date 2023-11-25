@@ -3,7 +3,6 @@
 #from dotenv import load_dotenv
 import playerlist #so far only used file
 import map
-import actions
 
 name = "featherjoe" #filler since its just me here, should be constant but im reusing code for convenience
 players = playerlist.PlayerList()
@@ -57,7 +56,7 @@ while(args[0] != "end"):
                     pass #REPLACEME This is the help function
                 case "move":
                     try:
-                        print(actions.move(name, testRoom, int(args[2]), int(args[3])))
+                        print(players.getSelf(name).move(testRoom, int(args[2]), int(args[3])))
                     except Exception as e:
                         print(e)
 

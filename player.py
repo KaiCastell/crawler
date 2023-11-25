@@ -10,10 +10,10 @@ class Player(entity.Entity): #different is xp, xpmult, luck
     critChance = 0.05 # base is 5% but can change
     critDmgMult = 2.0 # base is a damage double
     healingMult = 1.0
-    dmgInMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0, 'magic':1.0, 'fire':1.0, 'cold':1.0, 'electric':1.0, 'poison':1.0} #works like a multiplier table. 0.5 is a 50% resistance. dictionary lookup is better here
-    dmgOutMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0, 'magic':1.0, 'fire':1.0, 'cold':1.0, 'electric':1.0, 'poison':1.0}
-    luck = {'common':0.50, 'uncommon':0.30, 'rare':0.15, 'epic':0.04, 'legendary':0.01} # REPLACEME this is a placeholder. should involve a table for all interactions
-    actions = ['move'] #REPLACEME with actions objects. the creation of this dictionary should instantiate the proper objects. action.actions(move) i think? I can't think of a better way.
+    dmgInMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0} #works like a multiplier table. 0.5 is a 50% resistance
+    dmgOutMult = {'all':1.0, 'bludgeoning':1.0, 'slashing':1.0, 'piercing':1.0} #NOTEME much shorter for now, add more later
+    luck = {'common':0.60, 'uncommon':0.30, 'rare':0.10} # REPLACEME this is a placeholder. should involve a table for all interactions
+    #REPLACEME. Actions are now functions that get overridden. the creation of this dictionary should instantiate the proper objects.
     conditions = [] #REPLACEME should just run down the entire list anytime anything happens
     
     def __init__(self,name, maxHealth, health, speed):
@@ -25,13 +25,10 @@ class Player(entity.Entity): #different is xp, xpmult, luck
         equipment = []
         relics = []
         traits = []
-        #REPLACEME, iterate through mutators to populate equipment relics and traits
-        return f"Player: {self.name}\n"+ super(Player, self).__str__() + f"Luck:\n{self.luck}\nXP: {self.xp}\nXP Multiplier: {self.xpMult}\nActions:\n{self.actions}\nEquipment:\n{equipment}\nTraits:\n{traits}\nRelics:\n{relics}\n"
-    def hasAction(self, actionName):
-        for x in range(len(self.actions)):
-            if(actionName == self.actions[x]):
-                return True
-        return False
+        #REPLACEME, iterate through mutators to populate equipment relics and traits, Doesn't print actions anymore
+        return (f"Player: {self.name}\n"+ super(Player, self).__str__() + f"Damage Dealt Table: {self.dmgOutMult}\n"
+               f"Block Multiplier: {self.blockMult}\nHealing Multiplier: {self.healingMult}\nLuck:\n{self.luck}\nXP: {self.xp}\n"
+               f"XP Multiplier: {self.xpMult}\nEquipment:\n{equipment}\nTraits:\n{traits}\nRelics:\n{relics}\n")
 
 class Doctor(Player):
     def __init__(self, name):

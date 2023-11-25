@@ -2,7 +2,6 @@ import discord
 import os
 import playerlist
 import map
-import actions
 from discord.ext import commands
 from dotenv import load_dotenv
 # Create a Discord client instance and set the command prefix
@@ -105,7 +104,7 @@ async def do(ctx: commands.Context, *args): #all view commands, listed out into 
             case "commands":
                 pass #REPLACEME This is the help function
             case "move":
-                await ctx.channel.send(actions.move(name, testRoom, int(args[1]), int(args[2])))
+                await ctx.channel.send(players.getSelf(name).move(testRoom, int(args[1]), int(args[2])))
             case _:
                 await ctx.channel.send(f"This is not an available command. Try '>map commands' for help.")
 
