@@ -14,3 +14,6 @@ This contains the files from my discord bot, crawler, coded in Python 3.6.11
     
 11/19/2023
   Currently attempting a move function via the actions.py file. Conditions, actions, and mutators are effectively empty. Maps is still filler. Playerlist needs edits to adopt the use of mutators to read in players properly (right now it is filler)
+
+12/15/2023
+  Changed the structure of the code to include folders, as the amount of files were being quite heavy. Fixed a bug related to the "view character short" function since the actions changed. Added a parameter to map creation to streamline further map testing. Added "entityList" to map.py in order to make finding entities on the map faster (previously was iterating the entire map), additionally added a position attribute to all entities.
