@@ -17,3 +17,6 @@ This contains the files from my discord bot, crawler, coded in Python 3.6.11
 
 12/15/2023
   Changed the structure of the code to include folders, as the amount of files were being quite heavy. Fixed a bug related to the "view character short" function since the actions changed. Added a parameter to map creation to streamline further map testing. Added "entityList" to map.py in order to make finding entities on the map faster (previously was iterating the entire map), additionally added a position attribute to all entities.
+
+12/22/2023
+  Made some changes that made the tile printing process on the map more dynamic to prepare for various entities. Note that it isn't prepared for when it runs out of letters. Also note that the mainOffline file has some functions the other main does not. Finally, added another attribute to the map.py, the entityList, which allows for quicker accesses.
