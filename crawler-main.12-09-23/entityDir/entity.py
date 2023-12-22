@@ -5,17 +5,19 @@ class Entity:
     conditions = [] # REPLACEME fill with lists of each condition
     critChance = 0.05
     critDmgMult = 2.0
+    tilePrint = ""
+    dmgInMult = {'all':1.0, 'physical':1.0, 'magical':1.0}
+    position = [-1,-1]
 
-    def __init__(self, name, position, maxHealth, health, speed, block, dmgInMult):
+    def __init__(self, name, maxHealth, health, speed, block):
         self.name = name
-        self.position = position
         self.maxHealth = maxHealth
         self.health = health
         self.speed = speed
         self.block = block
         #self.blockMult = blockMult
         #self.healingMult = healingMult
-        self.dmgInMult = dmgInMult
+        
         #self.dmgOutMult = dmgOutMult
 
     def __str__(self): #NOTEME dictionaries are cap sensitive so the print out is cringe rn, will need clean up later
@@ -23,7 +25,13 @@ class Entity:
                 f"{self.block}\nCrit Chance: {self.critChance*100}%\nCrit Damage: {self.critDmgMult}\n"
                 f"Damage Received Table: {self.dmgInMult}\n")
         #just an example, realistically this should never be printed? Or one for the enemy is unneeded and it actually just goes here
-                
+    
+    def assignTilePrint(self, string):
+        self.tilePrint = string.lower()
+    
+    def shortPrint(self):
+        return f"Name: {self.name}\nHealth: {self.health}/{self.maxHealth}Block: {self.block}"
+    
     def move(self, room, newX, newY):
         #print(f"Made it to {newX},{newY}")
         string = ""

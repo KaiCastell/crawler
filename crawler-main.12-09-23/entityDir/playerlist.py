@@ -101,8 +101,9 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
     def viewClass(self, name): # prints everything
         return str(self.getSelf(name))
     def viewClassShort(self, name):
-        x = self.getSelf(name)        
-        return f"**{x.__class__.__name__}**\nPlayer: {x.name}\nHealth: {x.health}/{x.maxHealth}\nSpeed: {x.speed}\nXP: {x.xp}\n"  
+        x = self.getSelf(name)
+        return x.shortPrint()
+        
     def add(self, name, className):
         for x in self.players:
             if(x.name == name):
@@ -114,6 +115,8 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
                 self.players.append(player.Scientist(name))
             case _:
                 print("No corresponding class found")
+        #we now need to assign a unique letter to the player the tilePrint attribute            
+        
         return True
     def addFromDropdown(self, name, className): # Add to here anytime you add a new class
         if(self.add(name, className)):

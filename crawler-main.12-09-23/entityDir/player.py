@@ -16,12 +16,20 @@ class Player(entity.Entity): #different is xp, xpmult, luck
     luck = {'common':0.60, 'uncommon':0.30, 'rare':0.10} # REPLACEME this is a placeholder. should involve a table for all interactions
     #REPLACEME. Actions are now functions that get overridden. the creation of this dictionary should instantiate the proper objects.
     conditions = [] #REPLACEME should just run down the entire list anytime anything happens
+    tilePrint = "" #needs to be instantiated where all players can be seen in playerlist
     
     def __init__(self,name, maxHealth, health, speed):
         self.name = name
         self.maxHealth = maxHealth
         self.health = health #current health. Should almost always initialize to = max health
         self.speed = speed
+        
+    def assignTilePrint(self, string):
+        self.tilePrint = string.upper()
+    
+    def shortPrint(self):
+        return f"**{self.__class__.__name__}**\nPlayer: {self.name}\nHealth: {self.health}/{self.maxHealth}\nSpeed: {self.speed}\nXP: {self.xp}\n"  
+    
     def __str__(self):
         equipment = []
         relics = []

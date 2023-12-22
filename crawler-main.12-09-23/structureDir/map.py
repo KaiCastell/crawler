@@ -1,3 +1,6 @@
+# from entityDir import player
+# from entityDir import enemy
+
 class Tile:
     occupied = False
     entity = None
@@ -27,7 +30,8 @@ class Tile:
             case "empty":
                 return "  "
             case "entity":
-                return "e "
+                temp = self.entity
+                return temp.tilePrint
             case "interact":
                 return "i "
 
@@ -41,8 +45,8 @@ class Room: #this is what fills the tileArray no matter what you put inside the 
         self.description = description
         match shape:
             case "test small":
-                rows = 5 #REPLACEME with randomization later
-                cols = 5
+                rows = 8 #REPLACEME with randomization later
+                cols = 8
                 for x in range(rows): #attempts to iterate the array
                     row = []
                     for y in range(cols):
@@ -52,7 +56,57 @@ class Room: #this is what fills the tileArray no matter what you put inside the 
                             row.append(Tile(False, None, None))
                     self.tileArray.append(row)
 
-    def spawnEntity(self, entity): #REPLACEME later on make this fit for any shaped room
+    def spawnEntity(self, entity): #REPLACEME later on make this fit for any shaped room right now just finds first legal spot
+        
+        
+        
+        tPrint = entity.name #tPrint is for our tile print
+        tPrint = tPrint.split()
+        if(len(tPrint) > 1):
+            tPrint[len(tPrint)-1] = "" #we take everything but the last word if its longer than one. Players are always only one word so this is for entities, who come with numbers. e.g. lobster 1
+        tPrint = " ".join(tPrint)
+        
+        foundMatch = False
+        # here we try to assign the same letter as similar entities
+        # for x in self.entityList:
+        #     temp = x.name
+        #     temp = temp.split()
+        #     if(len(temp) > 1):
+        #         temp[len(temp)-1] = ""
+        #     temp = " ".join(temp) #we do the same thing to the current entity
+        #     if(temp == tPrint): #if they are the same, that means we have the same 
+        #         entity.tilePrint = temp.tilePrint
+        #         foundMatch = True
+        #         break
+        #         #we found a match so we don't need to go through the other loops to make a tile print
+        
+        tempTilePrint = tPrint[0:1]
+        if(not foundMatch):
+            # we need to assign the new entity a legal tile print "ID"
+            count = 0
+            while(True):
+                noCopies = True #checks to see if we made changes
+                for x in self.entityList:
+                    checking = x.tilePrint
+                    try:    
+                        checking = checking[count:count+1]
+                        tempTilePrint = tPrint[count:count+1]
+                    except:
+                        noCopies = False #means we made changes so we have to check again to make sure there's no copies
+                        break 
+                    if(tempTilePrint == checking): #means we need a new identity
+                        count += 1
+                        noCopies = False #means we made changes so we have to check again to make sure there's no copies
+                        break
+                if(count+1 > len(entity.name)): #we also leave if we went through the whole name without finding a free letter (I hope this never happens)
+                    print(f"No free tile found for {entity.name}.")
+                    break
+                if(noCopies): #we didnt make changes means we didnt find a replicant and we don't need to repeat
+                    break
+            print(f"{entity.name} assigned letter {tempTilePrint}")
+            entity.assignTilePrint(tempTilePrint + " ") #NOTEME may need to have reserved letters later for particular entities (chest etc)
+            # finally uppercase it and we are done looking (players are always uppercased)
+        
         for x in range(len(self.tileArray)):
             for y in range(len(self.tileArray[x])):
                 if self.tileArray[x][y].getIdentity() == "empty":
@@ -64,6 +118,20 @@ class Room: #this is what fills the tileArray no matter what you put inside the 
                     return
         print("Failed to find an empty space to add player to map")
         return
+    
+    def findTile(self, string):
+        findString = string[:1].lower() #isolate to first letter lowercase
+        for x in range(len(self.tileArray)):
+            for y in range(len(self.tileArray[x])):
+                try:
+                    entity = self.tileArray[x][y].entity
+                    entityTilePrint = entity.tilePrint[:1]
+                    if(entityTilePrint.lower() == findString):
+                        return entity
+                except:
+                    pass
+        return "NULL"
+        
     
     def print(self): #just iterates the array to print based on identity
         string = "```\n  "

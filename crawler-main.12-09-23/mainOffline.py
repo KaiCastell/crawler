@@ -1,7 +1,7 @@
 #import discord
 #from discord.ext import commands
 #from dotenv import load_dotenv
-from entityDir import playerlist
+from entityDir import playerlist, enemy
 from structureDir import map
 
 
@@ -37,6 +37,12 @@ while(args[0] != "end"):
                     #print("View class for a detailed description: \n", view=classViewDropdownView())
                 case "map":
                     print(testRoom.print())
+                case "tile":
+                    entity = testRoom.findTile(args[2])
+                    if(entity == "NULL"):
+                        print("The tile you are trying to view was not found. Please try again with this syntax: view tile [character]")
+                    else:
+                        print("The tile accessed is shown below:\n" + entity.shortPrint())
                 case _:
                     print(f"This is not an available command. Try '>view commands' for help.")
 
@@ -49,7 +55,10 @@ while(args[0] != "end"):
                     match(args[2]):
                         case "self": #create self is the spawn player on map
                             testRoom.spawnEntity(players.getSelf(name)) 
-                            print(testRoom.print())
+                        case "testEnemy":
+                            lobster = enemy.Lobster()
+                            testRoom.spawnEntity(lobster)
+            print(testRoom.print())
 
         # ACTION COMMANDS #######################################################
         case "do":
