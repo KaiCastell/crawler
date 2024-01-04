@@ -20,3 +20,6 @@ This contains the files from my discord bot, crawler, coded in Python 3.6.11
 
 12/22/2023
   Made some changes that made the tile printing process on the map more dynamic to prepare for various entities. Note that it isn't prepared for when it runs out of letters. Also note that the mainOffline file has some functions the other main does not. Finally, added another attribute to the map.py, the entityList, which allows for quicker accesses.
+
+1/1/2024
+  Added moveEntity to map.py, which is completely separate from the move action. Made for putting entities into place or as an admin command. Added melee range targeting system. Fixed a few minor bugs. Added range 1 targeting. This is the last iteration of the map based game. Switching ideas to card oriented gameplay.
