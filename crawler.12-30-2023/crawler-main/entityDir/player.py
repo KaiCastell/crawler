@@ -1,31 +1,30 @@
 import entity
+import cards
 
 class Player(entity.Entity): #different is xp, xpmult, luck
     mutators = [] #includes traits, relics, equipments
+    conditions = [] #REPLACEME should just run down the entire list anytime anything happens
     #REPLACEME Conditions 2D List?
-    xp = 0
+
     xpMult = 1.0
-    block = 0
     blockMult = 1.0
-    critChance = 0.05 # base is 5% but can change
-    critDmgMult = 2.0 # base is a damage double
     healingMult = 1.0
-    position = [-1, -1] #means they aren't on a map yet
     dmgInMult = {'all':1.0, 'physical':1.0, 'magical':1.0} #works like a multiplier table. 0.5 is a 50% resistance
     dmgOutMult = {'all':1.0, 'physical':1.0, 'magical':1.0} #NOTEME much shorter for now, add more later
     luck = {'common':0.60, 'uncommon':0.30, 'rare':0.10} # REPLACEME this is a placeholder. should involve a table for all interactions
-    #REPLACEME. Actions are now functions that get overridden. the creation of this dictionary should instantiate the proper objects.
-    conditions = [] #REPLACEME should just run down the entire list anytime anything happens
-    tilePrint = "" #needs to be instantiated where all players can be seen in playerlist
     
-    def __init__(self,name, maxHealth, health, speed):
+    xp = 0
+    block = 0
+    maxHealth = 1
+    health = 0 #current health. Should almost always initialize to = max health
+    drawDie = []
+    energyDie = []
+    energy = 0
+    hand = [] #replace later with actual hand
+    incomingDamage = 0
+    
+    def __init__(self,name):
         self.name = name
-        self.maxHealth = maxHealth
-        self.health = health #current health. Should almost always initialize to = max health
-        self.speed = speed
-        
-    def assignTilePrint(self, string):
-        self.tilePrint = string.upper()
     
     def shortPrint(self):
         return f"**{self.__class__.__name__}**\nPlayer: {self.name}\nHealth: {self.health}/{self.maxHealth}\nSpeed: {self.speed}\nXP: {self.xp}\n"  
@@ -39,16 +38,22 @@ class Player(entity.Entity): #different is xp, xpmult, luck
                f"Block Multiplier: {self.blockMult}\nHealing Multiplier: {self.healingMult}\nLuck:\n{self.luck}\nXP: {self.xp}\n"
                f"XP Multiplier: {self.xpMult}\nEquipment:\n{equipment}\nTraits:\n{traits}\nRelics:\n{relics}\n")
 
-class Doctor(Player):
+class Doctor(Player): #NOTEME only scientist finished atm
+    maxHealth = 24
+    health = maxHealth
     def __init__(self, name):
-        super().__init__(name, 65, 65, 3)
+        super().__init__(name)
         # add doctor equipment and traits once that's a thing. adding these will automatically affect actions and stats? 
     def __str__(self):
         return "**Doctor**\n" + super(Doctor, self).__str__()
-    
+
 class Scientist(Player):
+    maxHealth = 20
+    health = maxHealth
     def __init__(self, name):
-        super().__init__(name, 60, 60, 2) # just different values for now just for sake's sake
+        super().__init__(name) # just different values for now just for sake's sake
+        self.drawDie = [3,3,3,6,6,6]
+        self.energyDie = [2,2,2,4,4,4]
         # add doctor equipment and traits once that's a thing. adding these will automatically affect actions and stats?
     def __str__(self):
         return "**Scientist**\n" + super(Scientist, self).__str__()

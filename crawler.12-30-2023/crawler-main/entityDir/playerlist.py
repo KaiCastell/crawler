@@ -6,7 +6,6 @@ sys.path.append(file_dir)
 
 import player
 
-
 class PlayerList: #holds all current players. Reads and writes to file to save them
     def __init__(self): #on initiation takes information from files
         print("File read start")
@@ -21,30 +20,6 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
                     className = playerFile.readline().strip()
                     name = playerFile.readline().strip()
                     self.add(name, className)
-                    self.players[count-1].health = int(playerFile.readline())
-                    self.players[count-1].maxHealth = int(playerFile.readline())
-                    self.players[count-1].speed = int(playerFile.readline())
-                    self.players[count-1].xp = int(playerFile.readline())
-                    self.players[count-1].xpMult = float(playerFile.readline())
-                    self.players[count-1].block = int(playerFile.readline())
-                    self.players[count-1].blockMult = float(playerFile.readline())
-                    self.players[count-1].critChance = float(playerFile.readline())
-                    self.players[count-1].critDmgMult = float(playerFile.readline())
-                    self.players[count-1].healingMult = float(playerFile.readline())
-                    #Dmg In Table
-                    self.players[count-1].dmgInMult.update({'all':float(playerFile.readline())})
-                    self.players[count-1].dmgInMult.update({'physical':float(playerFile.readline())})
-                    self.players[count-1].dmgInMult.update({'magical':float(playerFile.readline())})
-                    #Dmg Out Table
-                    self.players[count-1].dmgOutMult.update({'all':float(playerFile.readline())})
-                    self.players[count-1].dmgOutMult.update({'physical':float(playerFile.readline())})
-                    self.players[count-1].dmgOutMult.update({'magical':float(playerFile.readline())})
-                    #luck table
-                    self.players[count-1].luck.update({'common':float(playerFile.readline())})
-                    self.players[count-1].luck.update({'uncommon':float(playerFile.readline())})
-                    self.players[count-1].luck.update({'rare':float(playerFile.readline())})
-                    self.players[count-1].luck.update({'epic':float(playerFile.readline())})
-                    self.players[count-1].luck.update({'legendary':float(playerFile.readline())})
                     line = playerFile.readline().strip() #save it and check if its not the end, start reading in the mutators.
                     while line != "fileend": #NOTEME need to equip all these mutators, will need an add mutator version that ignores "on equip" effects. this means it will only edit actions and conditions.
                         #I anticipate a bug here where the conditions get added and applied, double applying some effects. how to prevent? putting in notes
@@ -68,21 +43,12 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         else:
             for x in self.players:
                 with open('player' + str(count) + '.txt', 'wt') as playerFile: #open up the file, closing as it exits while, opened in writing text mode
-                    playerFile.write(f"{x.__class__.__name__}\n{x.name}\n{x.health}\n{x.maxHealth}\n{x.speed}\n")
-                    playerFile.write(f"{x.xp}\n{x.xpMult}\n{x.block}\n{x.blockMult}\n{x.critChance}\n{x.critDmgMult}\n{x.healingMult}\n")
-                    for key in x.dmgInMult.keys():
-                        playerFile.write(str(x.dmgInMult[key]) + "\n")
-                    
-                    for key in x.dmgOutMult.keys():
-                        playerFile.write(str(x.dmgOutMult[key]) + "\n")
-                    
-                    for key in x.luck.keys():
-                        playerFile.write(str(x.luck[key]) + "\n")
-                        
-                    playerFile.write("mutators\n") # NOTEME mutators are anything that change the actions and conditions of a player: relics, equipment, traits
+                    playerFile.write(f"{x.__class__.__name__}\n{x.name}\n")
+                    # NOTEME mutators are anything that change the actions and conditions of a player: relics, equipment, traits
                     for y in range(len(x.mutators)):
                         playerFile.write(x.mutators[y] + "\n")
                     playerFile.write("fileend")
+                    #NOTEME after file end we should note changes not tied to mutations, xp and current health
                 count+=1
         
         print("Players saved to file")
@@ -98,8 +64,13 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         for x in self.players:
             string += f"\t{x.name} as the **{x.__class__.__name__}**\n"
         return string
+    def viewHand(self,name):
+        temp = self.getSelf(name)
+        return str(temp.hand)
+    
     def viewClass(self, name): # prints everything
         return str(self.getSelf(name))
+    
     def viewClassShort(self, name):
         x = self.getSelf(name)
         return x.shortPrint()
@@ -118,6 +89,7 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         #we now need to assign a unique letter to the player the tilePrint attribute            
         
         return True
+    
     def addFromDropdown(self, name, className): # Add to here anytime you add a new class
         if(self.add(name, className)):
             print(f"{className} assigned to {name}")
@@ -125,6 +97,7 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         else:
             print(f"{className} attempted to be assigned to {name}. Failed.")
             return f"You already chose a class. If you want a new class, call the delete function."
+        
     def reset(self):
         self.players.clear()
         

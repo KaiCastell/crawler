@@ -23,3 +23,6 @@ This contains the files from my discord bot, crawler, coded in Python 3.6.11
 
 1/1/2024
   Added moveEntity to map.py, which is completely separate from the move action. Made for putting entities into place or as an admin command. Added melee range targeting system. Fixed a few minor bugs. Added range 1 targeting. This is the last iteration of the map based game. Switching ideas to card oriented gameplay.
+
+1/8/2024
+  Massive changes to most of the code. At the moment, a printable board is made, though primitive. The next steps are being able to declare enemy intent and then show it on the board. Then actionable turns. The framework for cards, dice, and next steps are within the code.
