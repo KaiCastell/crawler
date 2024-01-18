@@ -1,12 +1,12 @@
 #import discord
 #from discord.ext import commands
 #from dotenv import load_dotenv
-from entityDir import playerlist
-from structureDir import gameLoop
+import playerlist #so far only used file
+import map
 
 name = "featherjoe" #filler since its just me here, should be constant but im reusing code for convenience
 players = playerlist.PlayerList()
-board = None
+testRoom = map.Room(0, "No description")
 
 userInputString = input("Enter function: ")
 args = userInputString.split()
@@ -21,13 +21,10 @@ while(args[0] != "end"):
                 case "character":
                     try:
                         if(args[2] == "short"):
-                            print(f"Viewing abridged version of {name}'s class:\n{players.viewClassShort(name)}")
-                        elif(args[2] == "hand"):
-                            print(f"Viewing {name}'s hand:\n{players.viewHand(name)}")
+                            print(f"Viewing {name}'s class:\n{players.viewClassShort(name)}")
                         else: #if you get here that should mean there is a args[1] but it wasn't short
                             print(f"This is not an available command. Try '>view commands' for help.")
-                    except Exception as e:
-                        print(e)
+                    except:
                         print(f"Viewing {name}'s class:\n{players.viewClass(name)}")
                 case "commands":
                     pass # REPLACEME This is the help function
@@ -36,10 +33,8 @@ while(args[0] != "end"):
                 case "classes":
                     pass # NOTEME Not necessary to fill here tbh, works on the main but the dropdown doesn't exist here
                     #print("View class for a detailed description: \n", view=classViewDropdownView())
-                case "board":
-                    print(board)
                 case "map":
-                    pass
+                    print(testRoom.print())
                 case _:
                     print(f"This is not an available command. Try '>view commands' for help.")
 
@@ -51,18 +46,19 @@ while(args[0] != "end"):
                 case "entity":
                     match(args[2]):
                         case "self": #create self is the spawn player on map
-                            pass
-                        case "testEnemy":
-                            pass
-                case "board":
-                    board = gameLoop.board(players.players, None, 0)
-                    print(board)
+                            testRoom.spawnEntity(players.getSelf(name)) 
+                            print(testRoom.print())
 
         # ACTION COMMANDS #######################################################
         case "do":
             match(args[1]):
                 case "commands":
                     pass #REPLACEME This is the help function
+                case "move":
+                    try:
+                        print(players.getSelf(name).move(testRoom, int(args[2]), int(args[3])))
+                    except Exception as e:
+                        print(e)
 
         # OTHER COMMANDS ########################################################
         case "save":

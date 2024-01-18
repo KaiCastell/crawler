@@ -1,7 +1,7 @@
 import discord
 import os
-from entityDir import playerlist
-from structureDir import gameLoop
+import playerlist
+import map
 from discord.ext import commands
 from dotenv import load_dotenv
 # Create a Discord client instance and set the command prefix
@@ -12,7 +12,7 @@ bot = commands.Bot(command_prefix='>', intents=intents)
 #################################### OTHER INITIALIZATIONS ##############################################
 
 players = playerlist.PlayerList()
-board = None
+testRoom = map.Room(0, "No description")
 # filing, note that, a is append, r is read, w is write, x creates a new file, second character t for text (default), b for binary
 
 # Set the confirmation message when the bot is ready
@@ -37,13 +37,16 @@ async def on_disconnect():
 @bot.command()
 @commands.has_permissions(administrator=True) #only big hoss can do this
 async def admin(ctx: commands.Context, *args):
-    # name = ctx.author.name
+    name = ctx.author.name
     if(ctx.channel.name == 'crawler'): #only respond to the command if it was in the crawler channel
         match(args[0]):
             case "create":
                 match(args[1]):
                     case "entity":
-                        pass
+                        match(args[2]):
+                            case "self": #create self is the spawn player on map
+                                testRoom.spawnEntity(players.getSelf(name)) 
+                                await ctx.channel.send(testRoom.print())
             case _:
                 await ctx.channel.send("Try again.")
 
@@ -59,13 +62,11 @@ async def create(ctx: commands.Context, arg):
         match(arg):
             case "character": # character creation
                 await ctx.channel.send("Select class: \n", view=classSelectDropdownView()) #ctx.send is also valid
-            case "commands":
+            case"commands":
                 pass # REPLACEME with the help stuff
-            case "board":
-                board = gameLoop.board(players.players, None, 0)
-                await ctx.channel.send(str(board))
             case _:
                 await ctx.channel.send(f"This is not an available command. Try '>choose commands' for help.")
+
 
 # View Commands #
 
@@ -89,10 +90,7 @@ async def view(ctx: commands.Context, *args): #all view commands, listed out int
             case "classes":
                 await ctx.channel.send("View class for a detailed description: \n", view=classViewDropdownView())
             case "map":
-                # await ctx.channel.send(testRoom.print())
-                pass
-            case "board":
-                await ctx.channel.send(str(board))
+                await ctx.channel.send(testRoom.print())
             case _:
                 await ctx.channel.send(f"This is not an available command. Try '>view commands' for help.")
 
@@ -105,8 +103,13 @@ async def do(ctx: commands.Context, *args): #all view commands, listed out into 
         match(args[0]):
             case "commands":
                 pass #REPLACEME This is the help function
+            case "move":
+                await ctx.channel.send(players.getSelf(name).move(testRoom, int(args[1]), int(args[2])))
             case _:
                 await ctx.channel.send(f"This is not an available command. Try '>map commands' for help.")
+
+
+
 
 # Other Commands #
 
