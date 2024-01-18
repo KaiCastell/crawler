@@ -26,3 +26,6 @@ This contains the files from my discord bot, crawler, coded in Python 3.6.11
 
 1/8/2024
   Massive changes to most of the code. At the moment, a printable board is made, though primitive. The next steps are being able to declare enemy intent and then show it on the board. Then actionable turns. The framework for cards, dice, and next steps are within the code.
+
+1/18/2024
+  A few changes though not complete with declaring intent.
