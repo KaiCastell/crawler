@@ -57,12 +57,14 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         for x in self.players:
             if(x.name == name):
                 return x
+    def getTurn(self, turn):
+        return self.players[turn % len(self.players)]
     def viewPlayers(self):
         if(len(self.players) == 0):
             return "There are no current players."
-        string = "Viewing current players:\n"
+        string = ""
         for x in self.players:
-            string += f"\t{x.name} as the **{x.__class__.__name__}**\n"
+            string += f"\t{x.name} as the {x.__class__.__name__}\n"
         return string
     
     def viewClass(self, name): # prints everything
