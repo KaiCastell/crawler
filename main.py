@@ -75,7 +75,7 @@ async def create(ctx: commands.Context, arg):
                 print("Game created.")
                 send = f"```Test game created with:\n{game.viewPlayers()}\n\n{game.viewBoard()}\nIt is {game.whosTurn().name}'s turn\nUse >view room to see your next actions```"
                 await ctx.channel.send(send)
-                print("success")
+                print("Game created successfully")
             case "board":
                 pass
             case _:
@@ -91,13 +91,7 @@ async def view(ctx: commands.Context, *args): #all view commands, listed out int
     if(ctx.channel.name == 'crawler'): #only respond to the command if it was in the crawler channel
         match(args[0]):
             case "self":
-                try:
-                    if(args[1] == "short"):
-                        await ctx.channel.send(f"Viewing {name}'s class:\n{game.viewClassShort(name)}")
-                    else: #if you get here that should mean there is a args[1] but it wasn't short
-                        await ctx.channel.send(f"This is not an available command. Try '>view commands' for help.")
-                except:
-                    await ctx.channel.send(f"Viewing {name}'s class:\n{game.viewClass(name)}")
+                await ctx.channel.send(f"Viewing {name}:\n{str(game.getPlayer(name))}")
             case "commands":
                 pass # REPLACEME This is the help function
             case "players":

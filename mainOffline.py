@@ -23,15 +23,7 @@ while(args[0] != "end"):
         case "view":
             match(args[1]):
                 case "self":
-                    themself = game.getPlayer(name)
-                    try:
-                        if(args[2] == "short"):
-                            print(f"Viewing abridged version of {name}'s class:\n{game.viewClassShort(name)}")
-                        else: #if you get here that should mean there is a args[1] but it wasn't short
-                            print(f"This is not an available command. Try '>view commands' for help.")
-                    except Exception as e:
-                        print(e)
-                        print(f"Viewing {name}'s class:\n{game.viewClass(name)}")
+                    print(str(game.getPlayer(name)))
                 case "commands":
                     pass # REPLACEME This is the help function
                 case "players":

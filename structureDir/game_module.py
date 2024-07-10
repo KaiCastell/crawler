@@ -6,7 +6,7 @@
 # also prints out the board and holds the entities
 
 from structureDir.board_module import Board
-from entityDir.playerlist_module import PlayerList
+from structureDir.playerlist_module import PlayerList
 
 class Game(Board, PlayerList):
     def __init__(self, seed):
@@ -16,4 +16,4 @@ class Game(Board, PlayerList):
     def movePlayer(self, name, decision):
         return super().movePlayer(super().getPlayer(name), decision)
     def whosTurn(self):
-        return self.players.getTurn(self.turn) #returns the player object
+        return self.getTurn(self.turn) #returns the player object

@@ -1,13 +1,8 @@
-
-
-class Decision:
-    pass
-
 class Room:
     idCounter = 0
     
     def __init__(self):
-        self.pathways = [None, None, None, None]
+        self.pathways =  [None, None, None, None]
         self.decisions = [None, None, None, None] # while this matches up with each pathway, there could possibly be other decisions that can be made
         self.players = [] # theoretically only needs to hold the names?
         self.id = Room.idCounter
@@ -30,79 +25,157 @@ class Room:
         strReturn += "]\n"
         return strReturn
         
+    def adjustName(self, name): #returns the name in 12 character max form for printing
+        if(len(name) > 14):
+            end = name[len(name)-4:]
+            return name[:9] + ".." + end
+        else:
+            return f"{name:^15}"
         
     def __str__(self):
         
-        # FIX ME add in a case for no players
+        # FIX ME add in a case for no players .needed?
 
         # player printing # # # # # # # # #
-        strEnd = ""
-        strNames = ""
-        strHealth = ""
-        strBlock = ""
-        strReturn = ""
-        # note each block should be "* 13-characters *"
+        strEnd =     ""
+        strNames =   ""
+        strTime =    ""
+        strNotice =  ""
+        strReturn =  ""
+        strKeys =    ""
+        # note each block should be "* 15-characters *"
+        
+        
         for x in self.players: # end piece
-            strEnd += "* * * * * * * * *  " 
+            strEnd += "* * * * * * * * * *  " 
         for x in self.players: # name
-            strNames += "* " + self.adjustName(x.name, False) + " *  " # up to 4 player max
-        for x in self.players: # health
-            temp = f"{x.health}/{x.maxHealth}"
-            temp = "{:^13}".format(temp)
+            strNames += "* " + self.adjustName(x.name) + " *  " # up to 4 player max
+        for x in self.players: # time
+            temp = f"Time: {x.currTime}/{x.maxTime}"
+            temp = "{:^15}".format(temp)
             temp = "* " + temp + " *  "
-            strHealth += temp
-        for x in self.players: # current block
-            temp = "{:^13}".format(x.block)
+            strTime += temp
+        for x in self.players: # notice
+            temp = f"Notice: {x.notice}"
+            temp = "{:^15}".format(temp)
             temp = "* " + temp + " *  "
-            strBlock += temp
-        strReturn += f"{strNames}\n{strHealth}\n{strBlock}\n{strEnd}\n\n\n" # name printing complete
+            strNotice += temp
+        for x in self.players: # keys
+            temp = f"Keys: {x.keys}"
+            temp = "{:^15}".format(temp)
+            temp = "* " + temp + " *  "
+            strKeys += temp
+            
+        
+        length = 51 # middle of print
+        strNames = f"{strNames:^{length}}"
+        strTime = f"{strTime:^{length}}"
+        strNotice = f"{strNotice:^{length}}"
+        strKeys = f"{strKeys:^{length}}"
+        strEnd = f"{strEnd:^{length}}"
+        
+        strReturn += f"{strNames}\n{strTime}\n{strNotice}\n{strKeys}\n{strEnd}\n\n" # name printing complete
         
         
-        # exit printing # # # # # # # # # #
+        # top exit printing # # # # # # # # # #
         
-        strTop = ""
+        # 19 char length
+        strTop =  "                   "
+        strMid1 = "                   "
+        strMid2 = "                   "
+        strMid3 = "                   "
+        strEnd =  "                   "
+        
+            
+        strTop +=      "* * * * * *  "
+        strMid1 +=     "*    1    *  "
+        strMid2 +=     "*         * "
+        if self.pathways[0] is None:
+            strMid3 += "* Blocked *  "
+        else:
+            strMid3 += "*   Open  *  "
+        strEnd +=      "* * * * * *  "
+                
+        strReturn += f"{strTop}\n{strMid1}\n{strMid2}\n{strMid3}\n{strEnd}\n"
+        
+        # left exit
+        
+        # 13 char length to the ends
+        strTop =  "             "
+        strMid0 = ""
         strMid1 = ""
         strMid2 = ""
         strMid3 = ""
-        strEnd = ""
+        strMid4 = ""
+        strEnd =  "             "
         
-        count = 1
-        
-        for x in self.pathways:
             
-            strTop +=      "* * * * * *      "
-            strMid1 += f"*    {count}    *      "
-            strMid2 +=     "*         *      "
-            if x is None:
-                strMid3 += "* Blocked *      "
-            else:
-                strMid3 += "*   Open  *      "
-            strEnd +=  "* * * * * *      "
-            count += 1
+        strMid0 +=     "* * * * * *  "
+        strMid1 +=     "*    4    *  "
+        strMid2 +=     "*         *  "
+        if self.pathways[3] is None:
+            strMid3 += "* Blocked *  "
+        else:
+            strMid3 += "*   Open  *  "
+        strMid4 +=     "* * * * * *  "
+        
+        # room 
+         
+        strTop +=  "* * * * * * * * * * * *  "
+        strMid0 += "*                     *  "
+        strMid1 += "*        Fill         *  "
+        strMid2 += "*   with info later   *  "
+        strMid3 += "*                     *  "
+        strMid4 += "*                     *  "
+        strEnd +=  "* * * * * * * * * * * *  "
+        
+        # right exit
+        
+        strMid0 +=     "* * * * * *  "
+        strMid1 +=     "*    2    *  "
+        strMid2 +=     "*         *  "
+        if self.pathways[1] is None:
+            strMid3 += "* Blocked *  "
+        else:
+            strMid3 += "*   Open  *  "
+        strMid4 +=     "* * * * * *  "
+        
+        
                 
-        strReturn += f"\n\n{strTop}\n{strMid1}\n{strMid2}\n{strMid3}\n{strEnd}\n"
+        strReturn += f"{strTop}\n{strMid0}\n{strMid1}\n{strMid2}\n{strMid3}\n{strMid4}\n{strEnd}\n"
+        
+        
+        # bottom exit
+        # 19 char length
+        strTop =  "                   "
+        strMid1 = "                   "
+        strMid2 = "                   "
+        strMid3 = "                   "
+        strEnd =  "                   "
+        
+            
+        strTop +=      "* * * * * * "
+        strMid1 +=     "*    3    * "
+        strMid2 +=     "*         * "
+        if self.pathways[2] is None:
+            strMid3 += "* Blocked * "
+        else:
+            strMid3 += "*   Open  * "
+        strEnd +=      "* * * * * * "
+                
+        strReturn += f"{strTop}\n{strMid1}\n{strMid2}\n{strMid3}\n{strEnd}\n"
         
         
         return strReturn
     
-    def adjustName(self, name, isEnemy): #returns the name in 12 character max form for printing
-        if(len(name) > 12):
-            if(isEnemy):
-                end = name[len(name)-1:]
-                return name[:10] + ".." + end
-            else:
-                end = name[len(name)-3:]
-                return name[:8] + ".." + end
-        else:
-            return f"{name:^13}"
 
     def leadsTo(self, nextRoom, direction, oneway):
         self.pathways[direction] = nextRoom
         if(oneway == False):
             set = self
         else:
-            set = 1 # blocked
-        match(direction): # setting the way back
+            set = None # blocked
+        match(direction): # setting the way back, note visually correct 
             case 0:
                 nextRoom.pathways[2] = set
             case 1:
