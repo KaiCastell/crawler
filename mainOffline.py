@@ -10,7 +10,7 @@
 from structureDir import game_module
 
 name = "featherjoe" #filler since its just me here, should be constant but im reusing code for convenience
-board = None
+game = game_module.Game("saved") # need one at the start so characters can be created at any time
 
 userInputString = input("Enter function: ")
 args = userInputString.split()
@@ -42,22 +42,16 @@ while(args[0] != "end"):
         case "create":
             match(args[1]):
                 case("character"):
-                    game.addFromDropdown(name, args[2]) #NOTEME needs specific input of Doctor or Scientist atm
-                case "entity":
-                    match(args[2]):
-                        case "self": #create self is the spawn player on map
-                            pass
-                        case "testEnemy":
-                            pass
+                    print(game.addPlayer(name, args[2])) #NOTEME needs specific input of Doctor or Scientist atm
+                case "test":
+                    temp = game.seed("test")
+                    temp += (f"\n{game.viewPlayers()}\n\n{game.viewBoard()}\n")
+                    temp += (f"It is {game.whosTurn().name}'s turn\nUse >view room to see your next actions")
+                    print(temp)
                 case "game":
-                    game = game_module.Game("test")
-                    print(game.viewBoard())
+                    print(game.seed("random"))
 
         # ACTION COMMANDS #######################################################
-        case "do":
-            match(args[1]):
-                case "commands":
-                    pass #REPLACEME This is the help function
         case "move":
             match(args[1]):
                 case "commands":
@@ -70,12 +64,13 @@ while(args[0] != "end"):
 
         # OTHER COMMANDS ########################################################
         case "save":
-            game.save()
-            print(f"You have saved.")
+            print(game.save())
         
         case "reset":
-            game.reset()
-            print("Players have been reset.")
+            print(game.reset())
+            
+        case "load":
+            print(game.load())
 
 
     userInputString = input("Enter function: ")

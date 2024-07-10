@@ -1,10 +1,10 @@
-import mind_module
+import entityDir.mind_module as mind_module
 
 class Entity:
     conditions = [] # REPLACEME fill with lists of each condition
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
+        pass
         
         #self.blockMult = blockMult
         #self.healingMult = healingMult
@@ -21,8 +21,7 @@ class Ally(Entity):
 class Player(Entity): #different is xp, xpmult, luck
     #REPLACEME Conditions 2D List?
     
-    def __init__(self, name):
-        self.name = name
+    def __init__(self):
         self.maxTime = 10 # predetermined number
         self.currTime = 10
         self.notice = 0 # for conspicuity / how easily noticed. 0 means u very sneaky
@@ -35,15 +34,15 @@ class Player(Entity): #different is xp, xpmult, luck
         return strReturn
 
 class Doctor(Player): #NOTEME only scientist finished atm
-    def __init__(self, name):
-        super().__init__(name)
-        # add doctor equipment and traits once that's a thing. adding these will automatically affect actions and stats?
+    def __init__(self):
+        super().__init__()
+        #self.mind = mind_module.Mind("Doctor")
     def __str__(self):
         return "**Doctor**\n" + super(Doctor, self).__str__()
 
 class Scientist(Player):
-    def __init__(self, name):
-        super().__init__(name) # just different values for now just for sake's sake
+    def __init__(self):
+        super().__init__() 
         self.mind = mind_module.Mind("Scientist")
     def __str__(self):
         return "**Scientist**\n" + super(Scientist, self).__str__()

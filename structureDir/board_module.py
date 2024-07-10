@@ -1,206 +1,114 @@
-class Room:
-    idCounter = 0
-    
-    def __init__(self):
-        self.pathways =  [None, None, None, None]
-        self.decisions = [None, None, None, None] # while this matches up with each pathway, there could possibly be other decisions that can be made
-        self.players = [] # theoretically only needs to hold the names?
-        self.id = Room.idCounter
-        Room.idCounter += 1
-        #    0
-        #  3   1
-        #    2
-        
-        # 1 as the room is blocked
-        
-    def printDescription(self):
-        strReturn = ""
-        strReturn += (f"ID : {self.id}\n")
-        strReturn += (f"Paths : [ ")
-        for x in self.pathways:
-            if x is not None:
-                strReturn += (f"{x.id} ")
-            else:
-                strReturn += "~ "
-        strReturn += "]\n"
-        return strReturn
-        
-    def adjustName(self, name): #returns the name in 12 character max form for printing
-        if(len(name) > 14):
-            end = name[len(name)-4:]
-            return name[:9] + ".." + end
-        else:
-            return f"{name:^15}"
-        
-    def __str__(self):
-        
-        # FIX ME add in a case for no players .needed?
 
-        # player printing # # # # # # # # #
-        strEnd =     ""
-        strNames =   ""
-        strTime =    ""
-        strNotice =  ""
-        strReturn =  ""
-        strKeys =    ""
-        # note each block should be "* 15-characters *"
-        
-        
-        for x in self.players: # end piece
-            strEnd += "* * * * * * * * * *  " 
-        for x in self.players: # name
-            strNames += "* " + self.adjustName(x.name) + " *  " # up to 4 player max
-        for x in self.players: # time
-            temp = f"Time: {x.currTime}/{x.maxTime}"
-            temp = "{:^15}".format(temp)
-            temp = "* " + temp + " *  "
-            strTime += temp
-        for x in self.players: # notice
-            temp = f"Notice: {x.notice}"
-            temp = "{:^15}".format(temp)
-            temp = "* " + temp + " *  "
-            strNotice += temp
-        for x in self.players: # keys
-            temp = f"Keys: {x.keys}"
-            temp = "{:^15}".format(temp)
-            temp = "* " + temp + " *  "
-            strKeys += temp
-            
-        
-        length = 51 # middle of print
-        strNames = f"{strNames:^{length}}"
-        strTime = f"{strTime:^{length}}"
-        strNotice = f"{strNotice:^{length}}"
-        strKeys = f"{strKeys:^{length}}"
-        strEnd = f"{strEnd:^{length}}"
-        
-        strReturn += f"{strNames}\n{strTime}\n{strNotice}\n{strKeys}\n{strEnd}\n\n" # name printing complete
-        
-        
-        # top exit printing # # # # # # # # # #
-        
-        # 19 char length
-        strTop =  "                   "
-        strMid1 = "                   "
-        strMid2 = "                   "
-        strMid3 = "                   "
-        strEnd =  "                   "
-        
-            
-        strTop +=      "* * * * * *  "
-        strMid1 +=     "*    1    *  "
-        strMid2 +=     "*         * "
-        if self.pathways[0] is None:
-            strMid3 += "* Blocked *  "
-        else:
-            strMid3 += "*   Open  *  "
-        strEnd +=      "* * * * * *  "
-                
-        strReturn += f"{strTop}\n{strMid1}\n{strMid2}\n{strMid3}\n{strEnd}\n"
-        
-        # left exit
-        
-        # 13 char length to the ends
-        strTop =  "             "
-        strMid0 = ""
-        strMid1 = ""
-        strMid2 = ""
-        strMid3 = ""
-        strMid4 = ""
-        strEnd =  "             "
-        
-            
-        strMid0 +=     "* * * * * *  "
-        strMid1 +=     "*    4    *  "
-        strMid2 +=     "*         *  "
-        if self.pathways[3] is None:
-            strMid3 += "* Blocked *  "
-        else:
-            strMid3 += "*   Open  *  "
-        strMid4 +=     "* * * * * *  "
-        
-        # room 
-         
-        strTop +=  "* * * * * * * * * * * *  "
-        strMid0 += "*                     *  "
-        strMid1 += "*        Fill         *  "
-        strMid2 += "*   with info later   *  "
-        strMid3 += "*                     *  "
-        strMid4 += "*                     *  "
-        strEnd +=  "* * * * * * * * * * * *  "
-        
-        # right exit
-        
-        strMid0 +=     "* * * * * *  "
-        strMid1 +=     "*    2    *  "
-        strMid2 +=     "*         *  "
-        if self.pathways[1] is None:
-            strMid3 += "* Blocked *  "
-        else:
-            strMid3 += "*   Open  *  "
-        strMid4 +=     "* * * * * *  "
-        
-        
-                
-        strReturn += f"{strTop}\n{strMid0}\n{strMid1}\n{strMid2}\n{strMid3}\n{strMid4}\n{strEnd}\n"
-        
-        
-        # bottom exit
-        # 19 char length
-        strTop =  "                   "
-        strMid1 = "                   "
-        strMid2 = "                   "
-        strMid3 = "                   "
-        strEnd =  "                   "
-        
-            
-        strTop +=      "* * * * * * "
-        strMid1 +=     "*    3    * "
-        strMid2 +=     "*         * "
-        if self.pathways[2] is None:
-            strMid3 += "* Blocked * "
-        else:
-            strMid3 += "*   Open  * "
-        strEnd +=      "* * * * * * "
-                
-        strReturn += f"{strTop}\n{strMid1}\n{strMid2}\n{strMid3}\n{strEnd}\n"
-        
-        
-        return strReturn
-    
 
-    def leadsTo(self, nextRoom, direction, oneway):
-        self.pathways[direction] = nextRoom
-        if(oneway == False):
-            set = self
-        else:
-            set = None # blocked
-        match(direction): # setting the way back, note visually correct 
-            case 0:
-                nextRoom.pathways[2] = set
-            case 1:
-                nextRoom.pathways[3] = set
-            case 2:
-                nextRoom.pathways[0] = set
-            case 3:
-                nextRoom.pathways[1] = set
-
+import structureDir.room_module as room_module
 
 class Board: #this is for the current game board"
 
-    
     # extra board effects variable? like burning or idk stuff
-    def __init__(self, players, seed):
+    def __init__(self, seed):
         self.rooms = []
-        print("A board is being created... ", end = "")
+        self.seed(seed) # separate so it can just add
+    
+    def save(self):
+        file = 'saves/board.txt'
+        with open(file, 'wt') as boardFile:
+            for x in self.rooms:
+            #open up the file, closing as it exits while, opened in writing text mode
+                boardFile.write(f"{x.id}\n{x.type}\n")
+                if(x.pathways[0] == None): 
+                    path0 = -1
+                else: 
+                    path0 = (x.pathways[0]).id
+                
+                if(x.pathways[1] == None): 
+                    path1 = -1 
+                else: 
+                    path1 = (x.pathways[1]).id
+                
+                if(x.pathways[2] == None): 
+                    path2 = -1 
+                else: 
+                    path2 = (x.pathways[2]).id
+                
+                if(x.pathways[3] == None): 
+                    path3 = -1 
+                else: 
+                    path3 = (x.pathways[3]).id
+                
+                boardFile.write(f"{path0}\n{path1}\n{path2}\n{path3}\n")
+                while(len(x.players) > 0):
+                    temp = (x.players).pop()
+                    boardFile.write(f"{temp.name}\n")
+                #need to save the mind later
+                boardFile.write("roomend\n")
+                #NOTEME after file end we should note changes not tied to mutations, xp and current health
+        
+        print("Board saved to file")
+    
+    def load(self):
+        print("Board file read start")
+        
+        file = 'saves/board.txt'
+        self.rooms = []
+        
+        try:
+            with open(file, 'rt') as boardFile:
+                while True: # read in all players
+                    
+                    # READ IN SECTION
+                    
+                    roomID = boardFile.readline().strip()
+                    if(roomID == ""):
+                        print("Reached end of board file")
+                        break
+                    print("Loading room " + roomID)
+                    #start with the base class and then edit
+                    
+                    temp = room_module.Room()
+                    temp.id = int(roomID)
+                    
+                    temp.type = int(boardFile.readline().strip())
+                    temp.pathways[0] = int(boardFile.readline().strip())
+                    temp.pathways[1] = int(boardFile.readline().strip())
+                    temp.pathways[2] = int(boardFile.readline().strip())
+                    temp.pathways[3] = int(boardFile.readline().strip())
+                    
+                    line = boardFile.readline().strip() #save it and check if its not the end, start reading in the mutators.
+                    while line != "roomend": # means there are players
+                        #if line == "": break #reached the end, likely unnecessary
+                        temp.players.append(line) # this should be the name. In the fixing section we will turn this into the object
+                        line = boardFile.readline().strip()
+                    
+                    self.addRoom(temp)
+        except: #Exception as e
+            print("File cannot be reached, or does not exist\n")
+            return
+            # means we dont have a save
+            
+        self.boardFix()
+        
+    def boardFix(self):
+        pass
+    
+    def seed(self, seed):
+        print("Creating board... ", end = "")
+        try:
+            players = self.players
+        except:
+            return "Error: Board not connected to player list yet."
+        
+        if(len(players) == 0):
+            print("Stopped; no players\n")
+            return "Cannot create a game with no players"
+        
         
         if(seed == "test"):
             print("mode: Test")
             print("Adding rooms...")
-            room0 = Room()
-            room1 = Room()
-            room2 = Room()
-            room3 = Room()
+            room0 = room_module.Room()
+            room1 = room_module.Room()
+            room2 = room_module.Room()
+            room3 = room_module.Room()
             
             self.addRoom(room0)
             self.connectNewRoom(room0, 1, room1, False)
@@ -212,10 +120,17 @@ class Board: #this is for the current game board"
                 (room0.players).append(x)
                 print(f"Added {x.name}", end = "")
             print("")
-
+            
+        elif(seed == "saved"):
+            print("mode: Saved")
+            Board.load(self)
+            if(len(self.rooms) == 0):
+                return "Currently no board is saved."
+            
         elif(seed == "random"):
-            print("mode: Random\n")
-            pass
+            print("mode: Random")
+         
+        return("Board created successfully.")
     
     def getRoom(self, criteria): #given player name, return the room the player is in
         if isinstance(criteria, str): # if string look for names
@@ -265,4 +180,5 @@ class Board: #this is for the current game board"
         strReturn += ""
         print("Done")
         return strReturn
-
+    
+    

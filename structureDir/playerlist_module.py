@@ -1,58 +1,62 @@
-import os
-import sys
-#this here is a generic solution to importing within the same folder issues
-file_dir = os.path.dirname(__file__)
-sys.path.append(file_dir)
+
 
 import entityDir.player_module as player_module
 
 class PlayerList: #holds all current players. Reads and writes to file to save them
     def __init__(self): #on initiation takes information from files
-        print("File read start")
         self.players = []
-        count = 1
-        loop = True
-        while loop: # read in all players
-            try:
-                with open('player' + str(count) + '.txt', 'rt') as playerFile:
-                    print("Opening player" + str(count) + ".txt")
-                    #start with the base class and then edit
-                    className = playerFile.readline().strip()
-                    name = playerFile.readline().strip()
-                    self.add(name, className)
-                    line = playerFile.readline().strip() #save it and check if its not the end, start reading in the mutators.
-                    while line != "fileend": #NOTEME need to equip all these mutators, will need an add mutator version that ignores "on equip" effects. this means it will only edit actions and conditions.
-                        #I anticipate a bug here where the conditions get added and applied, double applying some effects. how to prevent? putting in notes
-                        line = playerFile.readline().strip() # REPLACEME here if it wasn't equipment then you would start reading, so if an action took 5 lines to represent we want 5 readlines then go back to the top, ending with a line = playerFile, 
-                        #note that the first read in would actually be action.attribute = line
-            except: #Exception as e
-                #print(e) UNCOMMENT IF YOU WANT TO KNOW THE ERROR, alongside code up one line
-                loop = False # we no longer found a file so we break out, kinda beats a dead horse if i understand things correctly
-                print("File read end")
-                break
-            count+=1
-        
+        PlayerList.load(self) #doesnt really need a seed like board so just directly load
+    
     def save(self): # NOTEME This only saves players
+        file = 'saves/players.txt'
         count = 1
-        if(len(self.players) == 0):
-            file = 'player' + str(count) + '.txt'
-            while(os.path.exists(file)):
-                os.remove(file)
-                count+=1
-                file = 'player' + str(count) + '.txt'
-        else:
+        with open(file, 'wt') as playerFile:
             for x in self.players:
-                with open('player' + str(count) + '.txt', 'wt') as playerFile: #open up the file, closing as it exits while, opened in writing text mode
-                    playerFile.write(f"{x.__class__.__name__}\n{x.name}\n")
-                    # NOTEME mutators are anything that change the actions and conditions of a player: relics, equipment, traits
-                    for y in range(len(x.mutators)):
-                        playerFile.write(x.mutators[y] + "\n")
-                    playerFile.write("fileend")
-                    #NOTEME after file end we should note changes not tied to mutations, xp and current health
+            #open up the file, closing as it exits while, opened in writing text mode
+                playerFile.write(f"{x.__class__.__name__}\n{x.name}\n{x.currTime}\n{x.maxTime}\n{x.notice}\n{x.keys}\n")
+                #need to save the mind later
+                playerFile.write("playerend\n")
+                #NOTEME after file end we should note changes not tied to mutations, xp and current health
                 count+=1
         
         print("Players saved to file")
-    
+        
+    def load(self):
+        print("Players file read start")
+        
+        file = 'saves/players.txt'
+        self.players = []
+        count = 1
+        
+        try:
+            with open(file, 'rt') as playerFile:
+                while True: # read in all players
+                    className = playerFile.readline().strip()
+                    if(className == ""):
+                        print("Reached end of player file")
+                        break
+                    print("Loading player " + str(count))
+                    #start with the base class and then edit
+                    
+                    temp = self.addReturn(className)
+                    
+                    temp.name     = playerFile.readline().strip()
+                    temp.currTime = playerFile.readline().strip()
+                    temp.maxTime  = playerFile.readline().strip()
+                    temp.notice   = playerFile.readline().strip()
+                    temp.keys     = playerFile.readline().strip()
+                    
+                    line = playerFile.readline().strip() #save it and check if its not the end, start reading in the mutators.
+                    while line != "playerend": #NOTEME need to equip all these mutators, will need an add mutator version that ignores "on equip" effects. this means it will only edit actions and conditions.
+                        #if line == "": break #reached the end, likely unnecessary
+                        line = playerFile.readline().strip()
+                    
+                    self.players.append(temp)
+                        
+        except: #Exception as e
+            print("File cannot be reached, or does not exist\n")
+        count+=1
+            
     def getPlayer(self, name):
         for x in self.players:
             if(x.name == name):
@@ -60,10 +64,11 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
     
     def getTurn(self, turn):
         return self.players[turn % len(self.players)]
+    
     def viewPlayers(self):
         if(len(self.players) == 0):
             return "There are no current players."
-        string = ""
+        string = "Viewing current players: \n"
         for x in self.players:
             string += f"\t{x.name} as the {x.__class__.__name__}\n"
         return string
@@ -73,31 +78,29 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
     
     def viewClassShort(self, name):
         x = self.getPlayer(name)
-        return x.shortPrint()
-        
-    def add(self, name, className): # Add to here anytime you add a new class
+        return x.shortPrint()   
+    
+    def addPlayer(self, name, className): # Add to here anytime you add a new class
         for x in self.players: # make sure they aren't already there
             if(x.name == name):
-                return False
-        match className:
-            case "Doctor":
-                self.players.append(player_module.Doctor(name))
-            case "Scientist":
-                self.players.append(player_module.Scientist(name))
+                return False # failed cuz there
+        temp = self.addReturn(className)
+        temp.name = name
+        self.players.append(temp)
+        #we now need to assign a unique letter to the player the tilePrint attribute
+        
+        return (f"{name} added as {temp.__class__.__name__}.") # as in success
+        
+    def addReturn(self, className):
+        
+        match className.lower():
+            case "doctor":
+                return player_module.Doctor()
+            case "scientist":
+                return player_module.Scientist()
             case _:
                 print("No corresponding class found")
-        #we now need to assign a unique letter to the player the tilePrint attribute            
-        
-        return True
     
-    def addFromDropdown(self, name, className): # kinda the overhead, might condense NOTEME
-        if(self.add(name, className)):
-            print(f"{className} assigned to {name}")
-            return f"You have been assigned **{className}**."
-        else:
-            print(f"{className} attempted to be assigned to {name}. Failed.")
-            return f"You already chose a class. If you want a new class, call the delete function."
-        
     def reset(self):
         self.players.clear()
         
