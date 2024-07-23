@@ -61,4 +61,8 @@ class Game(Board, PlayerList):
             #print(e)
             print("No board to fix\n")
             return
-        
+    
+    def addPlayer(self, name, className): # override so that we can check is the board already exists
+        if(len(self.rooms) == 0):
+            return ("You cannot create a character if the game has already started.")
+        return PlayerList.addPlayer(self, name, className)

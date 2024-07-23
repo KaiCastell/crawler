@@ -80,7 +80,7 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         x = self.getPlayer(name)
         return x.shortPrint()   
     
-    def addPlayer(self, name, className): # Add to here anytime you add a new class
+    def addPlayer(self, name, className):
         for x in self.players: # make sure they aren't already there
             if(x.name == name):
                 return False # failed cuz there
@@ -91,7 +91,7 @@ class PlayerList: #holds all current players. Reads and writes to file to save t
         
         return (f"{name} added as {temp.__class__.__name__}.") # as in success
         
-    def addReturn(self, className):
+    def addReturn(self, className):  # Add to here anytime you add a new class
         
         match className.lower():
             case "doctor":

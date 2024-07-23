@@ -3,7 +3,7 @@
 class Mind:
     
     def __init__(self, type): # type is class, same thing
-        blank = Thought("blank")
+        blank = Thought("blank", "normal")
         self.thoughtArray = [
             [blank, blank, blank],
             [blank, blank, blank],
@@ -55,8 +55,9 @@ class Mind:
 
 class Thought: # like cards so this is going to be quite long
     
-    def __init__(self, thoughtName):
+    def __init__(self, thoughtName, type):
         self.name = None
+        self.type = type
         self.timeCost = 0
         match(thoughtName):
             case "blank":
@@ -99,6 +100,14 @@ class Thought: # like cards so this is going to be quite long
                 strMid3 = "* "
                 strMid3 += temp
                 strMid3 += "*   "
+        temp = strTop + strMid0 + strMid1 + strMid2 + strMid3 + strMid4 + strMid5 + strEnd
         
-        return strTop + strMid0 + strMid1 + strMid2 + strMid3 + strMid4 + strMid5 + strEnd
+        if(self.type == "locked"): # not efficient but much easier code.
+            temp2 = ""
+            for char in temp:
+                if char == '*':
+                    temp2 += '#'
+                else:
+                    temp2 += char
+        return temp
         
